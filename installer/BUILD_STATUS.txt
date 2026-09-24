@@ -1,0 +1,6 @@
+setup.exe 本机（Linux box）构建状态
+================================
+- Wine / Inno Setup / NSIS：未安装，无法在此 Linux 环境直接编译 BinanceQuantSetup.exe
+- 已就绪：installer/installer.iss + scripts/build_*.ps1 + .github/workflows/windows-setup.yml
+- 请在推送 main 或打 v* 标签后，从 GitHub Actions Artifact / Release 下载 BinanceQuantSetup.exe
+- Binance 行情下载：本机出口被 Binance 451 地理限制，回测数据未拉取；策略 list-strategies 已通过

@@ -1,0 +1,4 @@
+# 核心：直接依赖开源 Freqtrade（GPL-3），不重复造轮子
+freqtrade>=2024.8
+# 启动器（Windows 打包时 tkinter 为 CPython 自带）
+# pyinstaller 仅在 CI / 本地打 Windows 包时需要，见 scripts/
