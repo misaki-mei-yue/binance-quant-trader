@@ -1,8 +1,12 @@
-Windows setup.exe 构建说明
-========================
-正式安装包由 desktop/ 下 electron-builder 生成（NSIS）：
-  BinanceQuantSetup-<version>.exe
+Windows setup.exe — 已构建成功（CI）
+================================
+产物（GitHub Release v1.0.0）：
+  https://github.com/misaki-mei-yue/binance-quant-trader/releases/tag/v1.0.0
+  - BinanceQuantSetup-1.0.0.exe   (NSIS, electron-builder, ~73MB)
+  - BinanceQuantPortable-1.0.0.exe
 
-- Linux 本机：一般无法直接打 Windows NSIS（需 wine）；请用 GitHub Actions windows-latest
-- 旧版 Inno Setup 脚本 installer/installer.iss 已降级为备用
-- UI：Electron + React + Tailwind（Apple 外壳 + 类交易终端工作区）
+本机 Linux：可 vite build + win-unpacked；NSIS 需 Wine，故安装包以 windows-latest Actions 为准。
+
+UI：desktop/ Electron + React + Tailwind
+  - Apple 毛玻璃外壳（参考 design/ui-reference-apple.jpg）
+  - 策略页类 PC 交易布局（列表/K线/订单簿/底部票据），无交易所商标
