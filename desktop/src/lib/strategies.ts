@@ -3,6 +3,8 @@ export type NavKey =
   | "spot_ma"
   | "spot_grid"
   | "futures"
+  | "llm_signal"
+  | "freqai_lgbm"
   | "nfi_x6"
   | "nfi_x7"
   | "official_s001"
@@ -22,6 +24,8 @@ export const NAV_ITEMS: { key: NavKey; label: string; icon: string; group?: stri
   { key: "spot_ma", label: "均线入门", icon: "trending", group: "入门" },
   { key: "spot_grid", label: "网格入门", icon: "grid", group: "入门" },
   { key: "futures", label: "合约入门", icon: "zap", group: "入门" },
+  { key: "llm_signal", label: "LLM 信号", icon: "bot", group: "入门" },
+  { key: "freqai_lgbm", label: "FreqAI", icon: "brain", group: "入门" },
   { key: "nfi_x6", label: "NFI X6", icon: "star", group: "NFI" },
   { key: "nfi_x7", label: "NFI X7", icon: "star", group: "NFI" },
   { key: "official_s001", label: "Strategy001", icon: "book", group: "官方" },
@@ -74,6 +78,26 @@ export const STRATEGIES: Record<string, StrategyMeta> = {
     desc: "【入门示例】本仓库自写 EMA 多空；杠杆默认 3× 硬顶 10×",
     defaultPair: "BTC/USDT:USDT",
     defaultTf: "15m",
+    source: "入门",
+  },
+  llm_signal: {
+    key: "llm_signal",
+    mode: "spot",
+    strategy: "LLMSignalStrategy",
+    title: "LLM 信号策略",
+    desc: "【入门】调用设置中的模型 API 生成进出场 JSON · 有硬止损与仓位帽 · 无收益保证",
+    defaultPair: "BTC/USDT",
+    defaultTf: "15m",
+    source: "入门",
+  },
+  freqai_lgbm: {
+    key: "freqai_lgbm",
+    mode: "spot",
+    strategy: "FreqaiExampleStrategy",
+    title: "FreqAI LightGBM 示例",
+    desc: "【入门】Freqtrade FreqAI + LightGBM · 需额外 ML 依赖与历史数据 · 学习模板",
+    defaultPair: "BTC/USDT",
+    defaultTf: "5m",
     source: "入门",
   },
   nfi_x6: {

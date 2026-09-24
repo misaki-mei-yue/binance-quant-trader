@@ -24,3 +24,11 @@
 ## 其他
 
 - TA-Lib / pandas / pandas_ta / technical / ccxt 等由 Freqtrade 依赖树引入，遵循各自许可证。
+
+## OpenAI Python client
+
+- Package: `openai` (PyPI)
+- Used by: `user_data/llm_gateway/` for OpenAI-compatible chat completions (`base_url` pattern also used by LiteLLM / OpenRouter / DeepSeek / Ollama).
+- License: Apache-2.0
+- We do **not** vendor the full LiteLLM project; only the thin official client is required.
+

@@ -29,3 +29,7 @@ desktop/release/
 desktop/out/
 *.exe
 !design/**
+# Local secrets / runtime (never commit)
+user_data/config/llm.json
+user_data/config/ui_settings.json
+user_data/models/

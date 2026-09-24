@@ -10,6 +10,13 @@ contextBridge.exposeInMainWorld("bq", {
   stop: () => ipcRenderer.invoke("ft:stop"),
   isRunning: () => ipcRenderer.invoke("ft:isRunning"),
   listStrategies: () => ipcRenderer.invoke("ft:listStrategies"),
+  ftApi: (req) => ipcRenderer.invoke("ft:api", req),
+  getSettings: () => ipcRenderer.invoke("settings:get"),
+  saveSettings: (partial) => ipcRenderer.invoke("settings:save", partial),
+  testExchange: (opts) => ipcRenderer.invoke("exchange:test", opts),
+  getLlm: () => ipcRenderer.invoke("llm:get"),
+  saveLlm: (partial) => ipcRenderer.invoke("llm:save", partial),
+  testLlm: (partial) => ipcRenderer.invoke("llm:test", partial),
   onLog: (cb) => {
     const listener = (_e, line) => cb(line);
     ipcRenderer.on("ft:log", listener);

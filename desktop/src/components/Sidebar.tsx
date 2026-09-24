@@ -8,6 +8,8 @@ import {
   Settings,
   Star,
   BookOpen,
+  Bot,
+  Brain,
 } from "lucide-react";
 import { NAV_ITEMS, NavKey } from "../lib/strategies";
 
@@ -20,6 +22,8 @@ const ICONS: Record<string, React.ReactNode> = {
   settings: <Settings size={16} strokeWidth={1.75} />,
   star: <Star size={16} strokeWidth={1.75} />,
   book: <BookOpen size={16} strokeWidth={1.75} />,
+  bot: <Bot size={16} strokeWidth={1.75} />,
+  brain: <Brain size={16} strokeWidth={1.75} />,
 };
 
 export function Sidebar({ active, onChange }: { active: NavKey; onChange: (k: NavKey) => void }) {

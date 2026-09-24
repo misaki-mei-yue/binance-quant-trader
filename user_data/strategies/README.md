@@ -11,3 +11,8 @@ Freqtrade 会递归扫描本目录。启动示例见仓库根 `README.md`「策�
 ## 递归加载
 
 子目录策略需开启 `recursive_strategy_search`（各 `user_data/config/config_*.json` 已设为 `true`），或 CLI 加 `--recursive-strategy-search`。
+
+## 2.0 新增
+
+- `starter/LLMSignalStrategy.py` — OpenAI 兼容 LLM 信号
+- `freqai/FreqaiExampleStrategy.py` — FreqAI LightGBM 示例

@@ -1,7 +1,7 @@
 {
   "name": "binance-quant-trader-desktop",
-  "version": "1.1.1",
-  "description": "币安量化交易套件 — Apple 风格桌面端（Freqtrade）",
+  "version": "2.0.0-dev",
+  "description": "量化交易套件 2.0 — Freqtrade 多交易所 + 实时模拟盘 UI + LLM/FreqAI（开发版）",
   "main": "electron/main.cjs",
   "author": "misaki-mei-yue",
   "license": "GPL-3.0",

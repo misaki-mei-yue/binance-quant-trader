@@ -2,16 +2,14 @@
     "$schema": "https://schema.freqtrade.io/schema.json",
     "max_open_trades": 2,
     "stake_currency": "USDT",
-    "stake_amount": 50,
+    "stake_amount": "unlimited",
     "tradable_balance_ratio": 0.99,
     "fiat_display_currency": "USD",
-    "timeframe": "15m",
+    "timeframe": "5m",
     "dry_run": true,
     "dry_run_wallet": 1000,
-    "cancel_open_orders_on_exit": true,
-    "trading_mode": "futures",
-    "margin_mode": "isolated",
-    "liquidation_buffer": 0.05,
+    "cancel_open_orders_on_exit": false,
+    "trading_mode": "spot",
     "unfilledtimeout": {
         "entry": 10,
         "exit": 10,
@@ -40,8 +38,8 @@
         "ccxt_config": {},
         "ccxt_async_config": {},
         "pair_whitelist": [
-            "BTC/USDT:USDT",
-            "ETH/USDT:USDT"
+            "BTC/USDT",
+            "ETH/USDT"
         ],
         "pair_blacklist": []
     },
@@ -71,13 +69,48 @@
             "app://."
         ]
     },
-    "bot_name": "binance-futures-trend",
+    "bot_name": "freqai-example-dry",
     "initial_state": "running",
     "force_entry_enable": false,
     "internals": {
         "process_throttle_secs": 5
     },
-    "strategy": "FuturesTrendLeverage",
-    "strategy_path": "user_data/strategies/",
-    "recursive_strategy_search": true
+    "strategy": "FreqaiExampleStrategy",
+    "recursive_strategy_search": true,
+    "freqai": {
+        "enabled": true,
+        "purge_old_models": 2,
+        "train_period_days": 15,
+        "backtest_period_days": 7,
+        "identifier": "unique-lightgbm-example",
+        "feature_parameters": {
+            "include_timeframes": [
+                "5m",
+                "15m"
+            ],
+            "include_corr_pairlist": [
+                "BTC/USDT",
+                "ETH/USDT"
+            ],
+            "label_period_candles": 12,
+            "include_shifted_candles": 2,
+            "DI_threshold": 0.9,
+            "weight_factor": 0.9,
+            "principal_component_analysis": false,
+            "use_SVM_to_remove_outliers": true,
+            "indicator_periods_candles": [
+                10,
+                20
+            ]
+        },
+        "data_split_parameters": {
+            "test_size": 0.25,
+            "shuffle": false
+        },
+        "model_training_parameters": {
+            "n_estimators": 200,
+            "learning_rate": 0.05,
+            "n_jobs": -1
+        }
+    }
 }

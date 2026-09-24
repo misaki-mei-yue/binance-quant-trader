@@ -7,15 +7,26 @@ import { TradingWorkspace } from "./components/TradingWorkspace";
 import { SettingsPage } from "./components/SettingsPage";
 import { PositionsLogs } from "./components/PositionsLogs";
 import { NavKey, STRATEGIES } from "./lib/strategies";
+import { EMPTY_LIVE, LiveSnapshot, fetchLiveSnapshot, formatProfit } from "./lib/liveStore";
 
 export default function App() {
   const [nav, setNav] = useState<NavKey>("overview");
+  const [exchange, setExchange] = useState("binance");
   const [apiKey, setApiKey] = useState("");
   const [apiSecret, setApiSecret] = useState("");
+  const [password, setPassword] = useState("");
   const [dryRun, setDryRun] = useState(true);
+  const [llm, setLlm] = useState({
+    base_url: "",
+    api_key: "",
+    model_name: "",
+    enabled: false,
+  });
   const [running, setRunning] = useState(false);
+  const [apiReady, setApiReady] = useState(false);
   const [strategyLabel, setStrategyLabel] = useState<string | undefined>();
   const [logs, setLogs] = useState("");
+  const [live, setLive] = useState<LiveSnapshot>(EMPTY_LIVE);
 
   useEffect(() => {
     if (!window.bq) {
@@ -25,11 +36,30 @@ export default function App() {
     const offLog = window.bq.onLog((line) => setLogs((prev) => (prev + line).slice(-80000)));
     const offStatus = window.bq.onStatus((s) => {
       setRunning(!!s.running);
+      setApiReady(!!s.apiReady);
       if (s.strategy) setStrategyLabel(s.strategy);
+      if (s.dryRun !== undefined) setDryRun(!!s.dryRun);
     });
     window.bq.isRunning().then(setRunning);
     window.bq.getPaths().then((p) => {
       setLogs((l) => l + `[路径] root=${p.root}\n[Freqtrade] ${p.freqtrade}\n`);
+    });
+    window.bq.getSettings?.().then((s) => {
+      if (!s) return;
+      setExchange(s.exchange || "binance");
+      setApiKey(s.apiKey || "");
+      setApiSecret(s.apiSecret || "");
+      setPassword(s.password || "");
+      setDryRun(s.dryRun !== false);
+    });
+    window.bq.getLlm?.().then((c) => {
+      if (!c) return;
+      setLlm({
+        base_url: c.base_url || "",
+        api_key: c.api_key || "",
+        model_name: c.model_name || "",
+        enabled: !!c.enabled,
+      });
     });
     return () => {
       offLog();
@@ -37,7 +67,26 @@ export default function App() {
     };
   }, []);
 
-  const settings = { apiKey, apiSecret, dryRun };
+  useEffect(() => {
+    let cancelled = false;
+    const tick = async () => {
+      const snap = await fetchLiveSnapshot(running);
+      if (!cancelled) {
+        setLive(snap);
+        if (snap.apiReady) setApiReady(true);
+      }
+    };
+    tick();
+    if (!running) return;
+    const id = setInterval(tick, 1500);
+    return () => {
+      cancelled = true;
+      clearInterval(id);
+    };
+  }, [running]);
+
+  const settings = { apiKey, apiSecret, password, exchange, dryRun };
+  const pf = formatProfit(live.profit);
 
   const handleStart = async (opts: {
     strategyKey: string;
@@ -57,26 +106,29 @@ export default function App() {
       strategyKey: opts.strategyKey,
       apiKey,
       apiSecret,
+      password,
+      exchange,
       pairs: opts.pairs,
       timeframe: opts.timeframe,
       dryRun,
       leverageMax: opts.leverageMax,
     });
     if (!res.ok) {
-      setLogs((l) => l + `\n[错误] ${res.error}\n`);
-      alert(res.error || "启动失败");
+      const msg = res.error || "启动失败";
+      setLogs((l) => l + `\n[错误] ${msg}\n`);
+      alert(msg.includes("Freqtrade") || msg.includes("pip") ? msg : `启动失败：${msg}`);
     }
   };
 
   const handleStop = async () => {
     await window.bq?.stop();
+    setApiReady(false);
   };
 
   const meta = STRATEGIES[nav];
 
   return (
     <div className="app-gradient flex h-full flex-col overflow-hidden rounded-window">
-      {/* Apple titlebar */}
       <header className="drag-region relative flex h-12 shrink-0 items-center px-4">
         <TrafficLights />
         <div className="pointer-events-none absolute inset-0 flex items-center justify-center gap-2">
@@ -85,11 +137,12 @@ export default function App() {
               <path d="M12 3L20 19H4L12 3Z" fill="white" />
             </svg>
           </div>
-          <span className="text-sm font-semibold tracking-wide text-apple-text">币安量化交易套件</span>
+          <span className="text-sm font-semibold tracking-wide text-apple-text">量化交易套件</span>
         </div>
         <div className="ml-auto flex items-center">
           <div className="pointer-events-none mr-3 text-[10px] text-apple-muted">
-            {dryRun ? "DRY-RUN" : "LIVE"} · Freqtrade
+            {dryRun ? "模拟盘 DRY-RUN" : "实盘 LIVE"} · {exchange} · Freqtrade
+            {running ? (apiReady ? " · 已连接" : " · 启动中") : ""}
           </div>
           <WinControls />
         </div>
@@ -101,8 +154,13 @@ export default function App() {
           {nav === "overview" && (
             <Overview
               running={running}
+              apiReady={apiReady}
               strategyLabel={strategyLabel}
               dryRun={dryRun}
+              exchange={exchange}
+              profitLabel={pf.total}
+              profitPct={pf.pct}
+              openCount={live.openTrades.filter((t) => t.is_open !== false).length}
               onNavigate={(k) => setNav(k as NavKey)}
             />
           )}
@@ -111,22 +169,27 @@ export default function App() {
               meta={meta}
               settings={settings}
               running={running}
+              apiReady={apiReady}
               logs={logs}
               onStart={handleStart}
               onStop={handleStop}
             />
           )}
-          {nav === "positions" && <PositionsLogs logs={logs} running={running} />}
+          {nav === "positions" && (
+            <PositionsLogs logs={logs} running={running} apiReady={apiReady} live={live} />
+          )}
           {nav === "settings" && (
             <SettingsPage
-              apiKey={apiKey}
-              apiSecret={apiSecret}
-              dryRun={dryRun}
-              onChange={(p) => {
+              settings={settings}
+              llm={llm}
+              onSettings={(p) => {
+                if (p.exchange !== undefined) setExchange(p.exchange);
                 if (p.apiKey !== undefined) setApiKey(p.apiKey);
                 if (p.apiSecret !== undefined) setApiSecret(p.apiSecret);
+                if (p.password !== undefined) setPassword(p.password);
                 if (p.dryRun !== undefined) setDryRun(p.dryRun);
               }}
+              onLlm={(p) => setLlm((prev) => ({ ...prev, ...p }))}
             />
           )}
         </main>

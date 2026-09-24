@@ -1,6 +1,16 @@
 import React, { useEffect, useState } from "react";
 import { SOURCE_BADGE, StrategyMeta, TIMEFRAMES } from "../lib/strategies";
-import { Candle, DepthLevel, TradeTick, displayPair, fetchDepth, fetchKlines, mockTrades } from "../lib/market";
+import {
+  Candle,
+  DepthLevel,
+  TradeTick,
+  displayPair,
+  fetchDepth,
+  fetchKlinesPreferBot,
+  mockTrades,
+  sourceLabel,
+} from "../lib/market";
+import { EMPTY_LIVE, LiveSnapshot, fetchLiveSnapshot } from "../lib/liveStore";
 import { PairList } from "./PairList";
 import { CandleChart } from "./CandleChart";
 import { OrderBook } from "./OrderBook";
@@ -10,6 +20,8 @@ import { Segmented } from "./Segmented";
 export type WorkspaceSettings = {
   apiKey: string;
   apiSecret: string;
+  password: string;
+  exchange: string;
   dryRun: boolean;
 };
 
@@ -17,6 +29,7 @@ export function TradingWorkspace({
   meta,
   settings,
   running,
+  apiReady,
   logs,
   onStart,
   onStop,
@@ -24,6 +37,7 @@ export function TradingWorkspace({
   meta: StrategyMeta;
   settings: WorkspaceSettings;
   running: boolean;
+  apiReady: boolean;
   logs: string;
   onStart: (opts: {
     strategyKey: string;
@@ -44,16 +58,18 @@ export function TradingWorkspace({
   const [src, setSrc] = useState("mock");
   const [fastMa, setFastMa] = useState(10);
   const [slowMa, setSlowMa] = useState(30);
+  const [live, setLive] = useState<LiveSnapshot>(EMPTY_LIVE);
 
   useEffect(() => {
     setPair(meta.defaultPair);
     setTf(meta.defaultTf);
   }, [meta.key]);
 
+  // Market data
   useEffect(() => {
     let cancelled = false;
     (async () => {
-      const k = await fetchKlines(pair, tf, 120);
+      const k = await fetchKlinesPreferBot(pair, tf, 120, apiReady, settings.exchange);
       const d = await fetchDepth(pair);
       if (cancelled) return;
       setCandles(k.candles);
@@ -69,17 +85,34 @@ export function TradingWorkspace({
       setBids(d.bids);
       setAsks(d.asks);
       setMid(d.mid);
-      setTrades(mockTrades(d.mid));
+      if (!apiReady) setTrades(mockTrades(d.mid));
     }, 8000);
     return () => {
       cancelled = true;
       clearInterval(id);
     };
-  }, [pair, tf]);
+  }, [pair, tf, apiReady, settings.exchange]);
+
+  // Live bot poll
+  useEffect(() => {
+    let cancelled = false;
+    const tick = async () => {
+      const snap = await fetchLiveSnapshot(running);
+      if (!cancelled) setLive(snap);
+    };
+    tick();
+    if (!running) return;
+    const id = setInterval(tick, 1500);
+    return () => {
+      cancelled = true;
+      clearInterval(id);
+    };
+  }, [running, apiReady]);
+
+  const connected = running && (apiReady || live.apiReady);
 
   return (
     <div className="flex h-full min-h-0 flex-col">
-      {/* strategy params strip — Apple style */}
       <div className="flex flex-wrap items-center gap-3 border-b border-apple-line bg-white/35 px-4 py-2.5">
         <div>
           <div className="flex items-center gap-2">
@@ -89,6 +122,11 @@ export function TradingWorkspace({
             >
               {SOURCE_BADGE[meta.source].label}
             </span>
+            {settings.dryRun ? (
+              <span className="rounded-pill bg-sky-100 px-2 py-0.5 text-[10px] font-medium text-sky-700">模拟盘</span>
+            ) : (
+              <span className="rounded-pill bg-red-100 px-2 py-0.5 text-[10px] font-medium text-red-700">实盘</span>
+            )}
           </div>
           <div className="text-[11px] text-apple-muted">{meta.desc}</div>
         </div>
@@ -123,18 +161,29 @@ export function TradingWorkspace({
               </label>
             </div>
           )}
-          <div className="text-[10px] text-apple-muted">
-            行情源: {src === "mock" ? "本地模拟（公共 API 不可用）" : "Binance 公共"} · {displayPair(pair)}
+          <div
+            className={`rounded-pill px-2.5 py-1 text-[10px] font-medium ${
+              src === "mock" ? "bg-amber-100 text-amber-900" : "bg-emerald-50 text-emerald-800"
+            }`}
+          >
+            行情：{sourceLabel(src)} · {displayPair(pair)} · {settings.exchange}
           </div>
         </div>
       </div>
 
-      {/* Binance-like workspace */}
+      {!connected && (
+        <div className="border-b border-amber-200/80 bg-amber-50/90 px-4 py-1.5 text-[11px] text-amber-900">
+          {running
+            ? "机器人进程已启动，正在连接 api_server… 持仓/盈亏稍后自动出现。"
+            : "未连接模拟盘 — 下方图表若标注「未连接」则为本地示意，不是实盘行情。选择参数后点「启动模拟盘」。"}
+        </div>
+      )}
+
       <div className="flex min-h-0 flex-1">
         <PairList mode={meta.mode} value={pair} onChange={setPair} />
         <div className="flex min-w-0 flex-1 flex-col bg-white/30 p-2">
           <div className="min-h-0 flex-1 rounded-2xl bg-white/70 p-2 shadow-soft">
-            <CandleChart candles={candles} height={340} />
+            <CandleChart candles={candles} height={320} />
           </div>
         </div>
         <OrderBook bids={bids} asks={asks} trades={trades} mid={mid || candles.at(-1)?.close || 0} source={src} />
@@ -144,6 +193,8 @@ export function TradingWorkspace({
         isFutures={meta.mode === "futures"}
         dryRun={settings.dryRun}
         running={running}
+        apiReady={apiReady || live.apiReady}
+        live={live}
         leverage={leverage}
         onLeverage={setLeverage}
         logs={logs}

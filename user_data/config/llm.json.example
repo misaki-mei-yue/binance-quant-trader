@@ -1,0 +1,8 @@
+{
+  "base_url": "https://api.deepseek.com/v1",
+  "api_key": "",
+  "model_name": "deepseek-chat",
+  "enabled": false,
+  "timeout_sec": 20,
+  "_comment": "复制为 llm.json（已 gitignore）。OpenAI / DeepSeek / Qwen / Ollama / OpenRouter 均可用 base_url + key。"
+}

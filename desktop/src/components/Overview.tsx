@@ -5,13 +5,23 @@ const GROUPS: StrategySource[] = ["入门", "NFI", "官方示例"];
 
 export function Overview({
   running,
+  apiReady,
   strategyLabel,
   dryRun,
+  exchange,
+  profitLabel,
+  profitPct,
+  openCount,
   onNavigate,
 }: {
   running: boolean;
+  apiReady: boolean;
   strategyLabel?: string;
   dryRun: boolean;
+  exchange: string;
+  profitLabel: string;
+  profitPct: string;
+  openCount: number;
   onNavigate: (k: string) => void;
 }) {
   const all = Object.values(STRATEGIES);
@@ -19,22 +29,32 @@ export function Overview({
   return (
     <div className="scroll-thin h-full overflow-auto p-8">
       <div className="mb-6">
-        <div className="text-xs font-medium text-[#0ECB81]">Freqtrade · dry_run 默认开启</div>
-        <h1 className="mt-1 text-3xl font-bold tracking-tight text-apple-text">币安量化交易套件</h1>
+        <div className="text-xs font-medium text-[#0ECB81]">
+          Freqtrade 引擎 · 默认模拟盘 · 多交易所（CCXT）
+        </div>
+        <h1 className="mt-1 text-3xl font-bold tracking-tight text-apple-text">量化交易套件 2.0</h1>
         <p className="mt-2 max-w-2xl text-sm text-apple-muted">
-          Apple 风格外壳 + 类桌面交易工作区。引擎为开源 Freqtrade（GPL-3）。
-          入门三套为自写模板；NFI 与官方示例为第三方社区策略（GPL-3），无收益保证，请先模拟盘/回测。
+          不再使用演示假数据冒充实盘。选择策略 →「启动模拟盘」→ 持仓/盈亏经 api_server 实时刷新。
+          旧版「demo mock」工作区已替换为真实机器人状态（未启动时图表会明确标注「未连接」）。
         </p>
       </div>
 
       <div className="mb-8 grid grid-cols-3 gap-4">
         {[
-          { label: "权益（模拟）", value: "1,000.00 USDT", sub: "dry_run_wallet（NFI 默认 10000）" },
-          { label: "今日盈亏", value: "—", sub: running ? "运行中统计见日志" : "未启动" },
+          {
+            label: "模拟盈亏",
+            value: running && apiReady ? profitLabel : "—",
+            sub: running && apiReady ? `收益率 ${profitPct}` : dryRun ? "启动后显示" : "实盘模式",
+          },
+          {
+            label: "持仓数",
+            value: running && apiReady ? String(openCount) : "—",
+            sub: running ? (apiReady ? "实时" : "连接中…") : "未连接模拟盘",
+          },
           {
             label: "机器人状态",
-            value: running ? "运行中" : "空闲",
-            sub: strategyLabel || (dryRun ? "模拟盘" : "实盘"),
+            value: running ? (apiReady ? "运行中 · 已连接" : "启动中") : "空闲",
+            sub: `${strategyLabel || exchange} · ${dryRun ? "模拟盘" : "实盘"}`,
           },
         ].map((c) => (
           <div key={c.label} className="rounded-card bg-apple-card p-5 shadow-card">
@@ -43,6 +63,21 @@ export function Overview({
             <div className="mt-1 text-[11px] text-apple-muted">{c.sub}</div>
           </div>
         ))}
+      </div>
+
+      <div className="mb-6 flex flex-wrap gap-2">
+        <button
+          onClick={() => onNavigate("settings")}
+          className="rounded-pill bg-apple-pill px-4 py-2 text-xs font-semibold text-white shadow-soft"
+        >
+          设置交易所 / 模型 API
+        </button>
+        <button
+          onClick={() => onNavigate("spot_ma")}
+          className="rounded-pill bg-white/80 px-4 py-2 text-xs font-medium text-apple-text shadow-soft ring-1 ring-apple-line"
+        >
+          打开均线策略 → 启动模拟盘
+        </button>
       </div>
 
       {GROUPS.map((g) => {
@@ -55,7 +90,7 @@ export function Overview({
                 {badge.label}
               </span>
               <span className="text-xs text-apple-muted">
-                {g === "入门" && "本仓库自写模板，仅供学习"}
+                {g === "入门" && "本仓库模板（含 LLM / FreqAI 示例）"}
                 {g === "NFI" && "iterativv/NostalgiaForInfinity · GPL-3"}
                 {g === "官方示例" && "freqtrade/freqtrade-strategies · GPL-3"}
               </span>

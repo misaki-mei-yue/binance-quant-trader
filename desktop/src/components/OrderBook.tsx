@@ -44,7 +44,7 @@ export function OrderBook({
       <div className="flex items-center justify-between border-b border-apple-line px-2 py-1.5">
         <span className="text-xs font-semibold text-apple-text">订单簿</span>
         <span className="rounded-pill bg-apple-bg px-2 py-0.5 text-[10px] text-apple-muted">
-          {source === "mock" ? "模拟深度" : "公共深度"}
+          {source === "mock" ? "未连接·示意" : "公共深度"}
         </span>
       </div>
       <div className="grid grid-cols-3 gap-1 px-2 py-1 text-[10px] text-apple-muted">

@@ -1,4 +1,13 @@
-# 核心：直接依赖开源 Freqtrade（GPL-3），不重复造轮子
+# 核心：开源 Freqtrade（GPL-3）— 多交易所 CCXT + dry-run + api_server + FreqAI
 freqtrade>=2024.8
-# 启动器（Windows 打包时 tkinter 为 CPython 自带）
-# pyinstaller 仅在 CI / 本地打 Windows 包时需要，见 scripts/
+
+# LLM 网关（OpenAI 兼容客户端；勿整包 vendoring LiteLLM）
+openai>=1.40.0
+
+# 说明：
+# - ccxt 随 freqtrade 安装，用于交易所适配与「测试连接」脚本
+# - FreqAI / LightGBM 额外依赖（按需安装，体积较大）：
+#     pip install freqtrade[freqai]
+#   或官方文档推荐组合（版本随 Freqtrade 发布说明）：
+#     pip install lightgbm datasieve scikit-learn
+# - Windows 桌面：先 python -m venv .venv && .venv\Scripts\activate && pip install -r requirements.txt
