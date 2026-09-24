@@ -4,6 +4,7 @@ contextBridge.exposeInMainWorld("bq", {
   minimize: () => ipcRenderer.invoke("win:minimize"),
   maximize: () => ipcRenderer.invoke("win:maximize"),
   close: () => ipcRenderer.invoke("win:close"),
+  platform: process.platform,
   getPaths: () => ipcRenderer.invoke("app:getPaths"),
   start: (opts) => ipcRenderer.invoke("ft:start", opts),
   stop: () => ipcRenderer.invoke("ft:stop"),

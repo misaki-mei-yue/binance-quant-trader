@@ -1,6 +1,6 @@
 {
   "name": "binance-quant-trader-desktop",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "币安量化交易套件 — Apple 风格桌面端（Freqtrade）",
   "main": "electron/main.cjs",
   "author": "misaki-mei-yue",

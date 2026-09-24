@@ -23,6 +23,7 @@ declare global {
       minimize: () => Promise<void>;
       maximize: () => Promise<void>;
       close: () => Promise<void>;
+      platform: string;
       getPaths: () => Promise<{
         root: string;
         userData: string;

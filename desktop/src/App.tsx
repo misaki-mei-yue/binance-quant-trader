@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { TrafficLights } from "./components/TrafficLights";
+import { WinControls } from "./components/WinControls";
 import { Sidebar } from "./components/Sidebar";
 import { Overview } from "./components/Overview";
 import { TradingWorkspace } from "./components/TradingWorkspace";
@@ -86,8 +87,11 @@ export default function App() {
           </div>
           <span className="text-sm font-semibold tracking-wide text-apple-text">币安量化交易套件</span>
         </div>
-        <div className="no-drag ml-auto text-[10px] text-apple-muted">
-          {dryRun ? "DRY-RUN" : "LIVE"} · Freqtrade
+        <div className="ml-auto flex items-center">
+          <div className="pointer-events-none mr-3 text-[10px] text-apple-muted">
+            {dryRun ? "DRY-RUN" : "LIVE"} · Freqtrade
+          </div>
+          <WinControls />
         </div>
       </header>
 
