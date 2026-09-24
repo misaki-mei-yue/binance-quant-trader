@@ -21,3 +21,11 @@ build/
 .vscode/
 .DS_Store
 tradesv3*.sqlite
+
+# Electron / desktop
+desktop/node_modules/
+desktop/dist/
+desktop/release/
+desktop/out/
+*.exe
+!design/**

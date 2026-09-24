@@ -1,0 +1,106 @@
+{
+  "name": "binance-quant-trader-desktop",
+  "version": "1.0.0",
+  "description": "\u5e01\u5b89\u91cf\u5316\u4ea4\u6613\u5957\u4ef6 \u2014 Apple \u98ce\u683c\u684c\u9762\u7aef\uff08Freqtrade\uff09",
+  "main": "electron/main.cjs",
+  "author": "misaki-mei-yue",
+  "license": "GPL-3.0",
+  "private": true,
+  "scripts": {
+    "dev": "concurrently -k \"vite\" \"wait-on http://127.0.0.1:5173 && electron .\"",
+    "build:ui": "vite build",
+    "build": "vite build && electron-builder --win nsis portable",
+    "build:dir": "vite build && electron-builder --win --dir",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "lightweight-charts": "^4.2.1",
+    "lucide-react": "^0.468.0"
+  },
+  "devDependencies": {
+    "@types/react": "^18.3.12",
+    "@types/react-dom": "^18.3.1",
+    "@vitejs/plugin-react": "^4.3.4",
+    "autoprefixer": "^10.4.20",
+    "concurrently": "^9.1.0",
+    "electron": "^33.2.0",
+    "electron-builder": "^25.1.8",
+    "postcss": "^8.4.49",
+    "tailwindcss": "^3.4.16",
+    "typescript": "^5.7.2",
+    "vite": "^6.0.3",
+    "wait-on": "^8.0.1"
+  },
+  "build": {
+    "appId": "com.misakimeiyue.binancequant",
+    "productName": "\u5e01\u5b89\u91cf\u5316\u4ea4\u6613\u5957\u4ef6",
+    "copyright": "Copyright \u00a9 2026 misaki-mei-yue",
+    "directories": {
+      "output": "release",
+      "buildResources": "build"
+    },
+    "files": [
+      "dist/**/*",
+      "electron/**/*",
+      "package.json"
+    ],
+    "extraResources": [
+      {
+        "from": "../user_data",
+        "to": "user_data",
+        "filter": [
+          "**/*",
+          "!data/**",
+          "!logs/**",
+          "!backtest_results/**",
+          "!hyperopt_results/**"
+        ]
+      },
+      {
+        "from": "../requirements.txt",
+        "to": "requirements.txt"
+      },
+      {
+        "from": "../.env.example",
+        "to": ".env.example"
+      }
+    ],
+    "win": {
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        },
+        {
+          "target": "portable",
+          "arch": [
+            "x64"
+          ]
+        }
+      ],
+      "artifactName": "BinanceQuantSetup-${version}.${ext}"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "\u5e01\u5b89\u91cf\u5316\u4ea4\u6613\u5957\u4ef6",
+      "installerLanguages": [
+        "zh_CN",
+        "en_US"
+      ],
+      "language": "2052",
+      "differentialPackage": false
+    },
+    "portable": {
+      "artifactName": "BinanceQuantPortable-${version}.exe"
+    },
+    "icon": "build/icon.png"
+  },
+  "type": "module"
+}
