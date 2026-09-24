@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { StrategyMeta, TIMEFRAMES } from "../lib/strategies";
+import { SOURCE_BADGE, StrategyMeta, TIMEFRAMES } from "../lib/strategies";
 import { Candle, DepthLevel, TradeTick, displayPair, fetchDepth, fetchKlines, mockTrades } from "../lib/market";
 import { PairList } from "./PairList";
 import { CandleChart } from "./CandleChart";
@@ -82,7 +82,14 @@ export function TradingWorkspace({
       {/* strategy params strip — Apple style */}
       <div className="flex flex-wrap items-center gap-3 border-b border-apple-line bg-white/35 px-4 py-2.5">
         <div>
-          <div className="text-sm font-semibold text-apple-text">{meta.title}</div>
+          <div className="flex items-center gap-2">
+            <div className="text-sm font-semibold text-apple-text">{meta.title}</div>
+            <span
+              className={`rounded-pill px-2 py-0.5 text-[10px] font-medium ${SOURCE_BADGE[meta.source].bg} ${SOURCE_BADGE[meta.source].text}`}
+            >
+              {SOURCE_BADGE[meta.source].label}
+            </span>
+          </div>
           <div className="text-[11px] text-apple-muted">{meta.desc}</div>
         </div>
         <div className="ml-auto flex flex-wrap items-center gap-3">

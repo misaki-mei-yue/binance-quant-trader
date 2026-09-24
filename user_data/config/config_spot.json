@@ -69,5 +69,6 @@
         "process_throttle_secs": 5
     },
     "strategy": "MACrossover",
-    "strategy_path": "user_data/strategies/"
+    "strategy_path": "user_data/strategies/",
+    "recursive_strategy_search": true
 }

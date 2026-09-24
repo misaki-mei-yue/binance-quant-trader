@@ -34,20 +34,74 @@ function findFreqtrade() {
 
 const STRATEGY_MAP = {
   overview: null,
+  // 入门示例（本仓库自写）
   spot_ma: {
     config: "config/config_spot.json",
     strategy: "MACrossover",
-    label: "现货均线",
+    label: "入门·现货均线",
+    source: "入门",
   },
   spot_grid: {
     config: "config/config_grid.json",
     strategy: "GridSpot",
-    label: "现货网格",
+    label: "入门·现货网格",
+    source: "入门",
   },
   futures: {
     config: "config/config_futures.json",
     strategy: "FuturesTrendLeverage",
-    label: "合约趋势",
+    label: "入门·合约趋势",
+    source: "入门",
+  },
+  // NFI（第三方 GPL-3）
+  nfi_x6: {
+    config: "config/config_nfi.json",
+    strategy: "NostalgiaForInfinityX6",
+    label: "NFI X6",
+    source: "NFI",
+  },
+  nfi_x7: {
+    config: "config/config_nfi.json",
+    strategy: "NostalgiaForInfinityX7",
+    label: "NFI X7",
+    source: "NFI",
+  },
+  // freqtrade-strategies 官方示例（第三方 GPL-3）
+  official_s001: {
+    config: "config/config_spot.json",
+    strategy: "Strategy001",
+    label: "官方·Strategy001",
+    source: "官方示例",
+  },
+  official_s002: {
+    config: "config/config_spot.json",
+    strategy: "Strategy002",
+    label: "官方·Strategy002",
+    source: "官方示例",
+  },
+  official_cluc: {
+    config: "config/config_spot.json",
+    strategy: "CombinedBinHAndCluc",
+    label: "官方·BinH+Cluc",
+    source: "官方示例",
+  },
+  official_macd: {
+    config: "config/config_spot.json",
+    strategy: "MACDStrategy",
+    label: "官方·MACD",
+    source: "官方示例",
+  },
+  official_bband: {
+    config: "config/config_spot.json",
+    strategy: "BbandRsi",
+    label: "官方·BBandRSI",
+    source: "官方示例",
+  },
+  official_super: {
+    config: "config/config_spot.json",
+    strategy: "Supertrend",
+    label: "官方·Supertrend",
+    source: "官方示例",
   },
 };
 
@@ -166,6 +220,7 @@ ipcMain.handle("ft:start", async (_e, opts) => {
     meta.strategy,
     "--userdir",
     ud,
+    "--recursive-strategy-search",
   ];
   sendLog(`$ ${ft} ${args.join(" ")}\n`);
   sendStatus({ running: true, strategy: meta.label, dryRun: data.dry_run });

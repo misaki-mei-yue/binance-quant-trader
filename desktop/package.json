@@ -1,7 +1,7 @@
 {
   "name": "binance-quant-trader-desktop",
-  "version": "1.0.0",
-  "description": "\u5e01\u5b89\u91cf\u5316\u4ea4\u6613\u5957\u4ef6 \u2014 Apple \u98ce\u683c\u684c\u9762\u7aef\uff08Freqtrade\uff09",
+  "version": "1.1.0",
+  "description": "币安量化交易套件 — Apple 风格桌面端（Freqtrade）",
   "main": "electron/main.cjs",
   "author": "misaki-mei-yue",
   "license": "GPL-3.0",
@@ -36,7 +36,7 @@
   "build": {
     "appId": "com.misakimeiyue.binancequant",
     "productName": "BinanceQuantTrader",
-    "copyright": "Copyright \u00a9 2026 misaki-mei-yue",
+    "copyright": "Copyright © 2026 misaki-mei-yue",
     "directories": {
       "output": "release",
       "buildResources": "build"
@@ -89,7 +89,7 @@
       "allowToChangeInstallationDirectory": true,
       "createDesktopShortcut": true,
       "createStartMenuShortcut": true,
-      "shortcutName": "\u5e01\u5b89\u91cf\u5316\u4ea4\u6613\u5957\u4ef6",
+      "shortcutName": "币安量化交易套件",
       "installerLanguages": [
         "zh_CN",
         "en_US"
