@@ -9,7 +9,7 @@
   "scripts": {
     "dev": "concurrently -k \"vite\" \"wait-on http://127.0.0.1:5173 && electron .\"",
     "build:ui": "vite build",
-    "build": "vite build && electron-builder --win nsis portable",
+    "build": "vite build && electron-builder --win nsis portable --publish never",
     "build:dir": "vite build && electron-builder --win --dir",
     "preview": "vite preview"
   },
@@ -35,7 +35,7 @@
   },
   "build": {
     "appId": "com.misakimeiyue.binancequant",
-    "productName": "\u5e01\u5b89\u91cf\u5316\u4ea4\u6613\u5957\u4ef6",
+    "productName": "BinanceQuantTrader",
     "copyright": "Copyright \u00a9 2026 misaki-mei-yue",
     "directories": {
       "output": "release",
@@ -100,7 +100,12 @@
     "portable": {
       "artifactName": "BinanceQuantPortable-${version}.exe"
     },
-    "icon": "build/icon.png"
+    "icon": "build/icon.png",
+    "publish": null
   },
-  "type": "module"
+  "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/misaki-mei-yue/binance-quant-trader.git"
+  }
 }
