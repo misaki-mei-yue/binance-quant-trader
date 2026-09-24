@@ -4,7 +4,7 @@
 > 桌面端 **Electron + React**：设置里选交易所与模型 → 策略页一键 **启动模拟盘** → 持仓/盈亏/日志走真实 api_server。  
 > **v2.0 起旧版「demo mock 冒充实盘」已替换**；未启动机器人时图表会明确标注「未连接 · 本地示意」。
 
-当前桌面版本：`desktop/package.json` → **2.0.0-dev**（功能开发版；正式发 setup.exe 由你决定是否打 tag）。
+当前桌面版本：`desktop/package.json` → **2.0.0**（含 Windows setup.exe / 绿色版）。
 
 ## 风险警告
 
